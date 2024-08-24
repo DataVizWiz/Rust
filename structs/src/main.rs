@@ -1,55 +1,68 @@
-struct Contact {
-    name: String,
-    email: String,
-    phone: String,
+struct Rectangle {
+    width: f64,
+    height: f64
 }
 
-impl Contact {
-    // Method to print contact details
-    fn print_contact(&self) {
-        println!("Name: {}", self.name);
-        println!("Email: {}", self.email);
-        println!("Phone: {}", self.phone);
+impl Rectangle {
+    fn area(&self) -> f64 {
+       self.width * self.height
     }
 
-    // Method to update email
-    fn update_email(&mut self, email: String) {
-        self.email = email; // Direct assignment
+    fn perimeter(&self) -> f64 {
+        2.0 * (self.width + self.height)
+    }
+    
+    // Rectangle is passed as a reference so dimensions can be checked without
+    // taking ownership, allowing the caller to retain ownership of Rectangle.
+    fn can_hold(&self, rectangle: &Rectangle) -> bool {
+        self.width > rectangle.width && self.height > rectangle.height
     }
 
-    // Method to update phone number
-    fn update_phone(&mut self, phone: String) {
-        self.phone = phone; // Direct assignment
+    fn scale(&mut self, scale_factor: f64) {
+        if scale_factor <= 0.0 {
+            println!("Warning: Scale factor must be positive.")
+        } else {
+            self.width *= scale_factor;
+            self.height *= scale_factor;
+        }
+
     }
 
-    // Method to check if another contact has the same name
-    fn has_same_name(&self, other: &Contact) -> bool {
-        self.name == other.name
+    fn diagonal_length(&self) -> f64 {
+        (self.width * self.width + self.height * self.height).sqrt()
     }
 }
 
 fn main() {
-    let mut cont1 = Contact {
-        name: String::from("John Doe"),
-        email: String::from("MyCool@email.com"),
-        phone: String::from("123456789"),
+    let mut rec = Rectangle {
+        width: 50.0,
+        height: 20.0
     };
 
-    let cont2 = Contact {
-        name: String::from("John Doe"),
-        email: String::from("AnotherCool@email.com"),
-        phone: String::from("8654787556"),
+    println!("{}", rec.width);
+    println!("{}", rec.height);
+
+    let area: f64 = rec.area();
+    println!("{}", area);
+
+    let perimeter: f64 = rec.perimeter();
+    println!("{}", perimeter);
+
+    let rec2 = Rectangle {
+        width: 25.0,
+        height: 15.0
     };
 
-    cont1.print_contact();
-    cont1.update_email(String::from("UpdatingMy@email.com"));
-    cont1.update_phone(String::from("98765485"));
-    cont1.print_contact();
-
-    // Check if two contacts have the same name
-    if cont1.has_same_name(&cont2) {
-        println!("Uh oh! Contact with the name '{}' already exists.", cont1.name);
+    if rec.can_hold(&rec2) {
+        println!("Rectangle 2 can fit in Rectangle 1");
     } else {
-        println!("No contact with the same name found.");
-    }
+        println!("Rectangle 2 is too large for Rectangle 1");
+    };
+
+    rec.scale(3.0);
+    println!("{}", rec.width);
+    println!("{}", rec.height);
+
+    let d_len = rec.diagonal_length();
+    println!("{}", d_len);
 }
