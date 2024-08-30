@@ -9,4 +9,6 @@ foreach ($dir in $projectDirs) {
     cargo clean
 }
 
+cd ..
+
 Write-Host "All projects cleaned."
