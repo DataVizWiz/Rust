@@ -1,0 +1,3 @@
+Successfully loaded 55,423,856 records into memory.
+5.56GB file size.
+Time taken: 139.9131821s
