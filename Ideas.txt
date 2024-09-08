@@ -1,0 +1,8 @@
+Querying from databases
+Reading CSV's into memory
+Writing to CSV's
+Converting to Parquet files
+Transformations
+Python bindings
+API collections
+Downloading and uploading to a datalake

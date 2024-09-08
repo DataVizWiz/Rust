@@ -8,31 +8,44 @@ fn read_file() -> Result<File, Error> {
     Ok(result)
 }
 
-fn main() {
-    let mut vec: Vec<i32> = Vec::new();
+fn parse_lines(file: File) -> Result<Vec<i32>, Error> {
+    let mut numbers: Vec<i32> = Vec::new();
 
-    match read_file() {
-        Ok(x) => {
-            for line in BufReader::new(x)
-                .lines() {
-                    let content = line.unwrap();
+    for line in BufReader::new(file)
+        .lines() {
+            // As line returns a Result<T, E> we can use ? to propogate errors
+            let content = line?;
 
-                    match content.parse::<i32>() {
-                        Ok(n) => vec.push(n),
-                        Err(e) => println!("Invalid line: {e}"),
-                     }
-                }
-        },
-        Err(e) => println!("Error opening file: {e:?}.")
-    };
+            match content.parse::<i32>() {
+                Ok(n) => numbers.push(n),
+                Err(_) => println!("'{content}' is an invalid record."),
+            }
+        }
 
-    println!("{:?}", vec);
+    Ok(numbers)
 }
 
-// fn main() {
+// Pass in a slice reference
+fn sum_numbers(numbers: &[i32]) -> i32 {
+    numbers.iter().sum()
+}
 
-
-//     for i in file.it {
-//         println!(i);
-//     } 
-// }
+fn main() {
+    match read_file() {
+        Ok(x) => {
+            // Parse the file content into a vector of integers
+            match parse_lines(x) {
+                Ok(numbers) => {
+                    if !numbers.is_empty() {
+                        let sum = sum_numbers(&numbers);
+                        println!("Sum: {sum}");
+                    } else {
+                        println!("No valid numbers to sum.");
+                    }
+                },
+                Err(e) => println!("Error parsing file: {e}.")
+            }
+        },
+        Err(e) => println!("Error opening file: {e}.")
+    };
+}
