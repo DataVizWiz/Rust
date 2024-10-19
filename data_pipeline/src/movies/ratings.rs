@@ -2,7 +2,6 @@ use crate::utils::io::read_csv;
 use serde::Deserialize;
 use std::collections::HashMap;
 
-#[allow(dead_code)] // For development only
 #[derive(Deserialize)]
 pub struct Rating {
     #[serde(rename(deserialize = "userId"))]
