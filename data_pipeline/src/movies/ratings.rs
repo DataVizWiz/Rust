@@ -5,11 +5,9 @@ use std::collections::HashMap;
 #[derive(Deserialize)]
 pub struct Rating {
     #[serde(rename(deserialize = "userId"))]
-    user_id: i32,
     #[serde(rename(deserialize = "movieId"))]
     movie_id: i32,
     rating: f32,
-    timestamp: i32,
 }
 
 impl Rating {
