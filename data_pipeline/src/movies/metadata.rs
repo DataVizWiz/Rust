@@ -1,35 +1,36 @@
 use crate::utils::io::read_csv;
 use chrono::NaiveDate;
 use serde::Deserialize;
+use postgres::{Client, NoTls};
+use std::env;
 
-#[allow(dead_code)] //For development only
 #[derive(Deserialize, Debug)]
 pub struct Movie {
     //Handle empty values with Option enum
-    adult: String,
-    belongs_to_collection: Option<String>,
-    pub budget: u32,
+    pub adult: String,
+    pub belongs_to_collection: Option<String>,
+    pub budget: i32,
     pub genres: String,
-    homepage: Option<String>,
-    pub id: u32,
-    imdb_id: String,
-    original_language: String,
+    pub homepage: Option<String>,
+    pub id: i32,
+    pub imdb_id: String,
+    pub original_language: String,
     pub original_title: String,
     pub overview: String,
-    popularity: f32,
-    poster_path: Option<String>,
-    production_companies: String,
-    production_countries: String,
-    release_date: Option<NaiveDate>,
-    revenue: f32,
-    runtime: Option<f32>,
-    spoken_languages: String,
-    status: String,
-    tagline: String,
-    title: String,
-    video: String,
-    vote_average: f32,
-    vote_count: u32,
+    pub popularity: f32,
+    pub poster_path: Option<String>,
+    pub production_companies: String,
+    pub production_countries: String,
+    pub release_date: Option<NaiveDate>,
+    pub revenue: f32,
+    pub runtime: Option<f32>,
+    pub spoken_languages: String,
+    pub status: String,
+    pub tagline: String,
+    pub title: String,
+    pub video: String,
+    pub vote_average: f32,
+    pub vote_count: i32,
     pub rating: Option<f32>,
 }
 
@@ -40,11 +41,57 @@ impl Movie {
 
         for res in rdr.deserialize() {
             let movie: Movie = res.expect("Invalid movie record");
-
-            if movie.budget > 0 {
-                movies.push(movie);
-            }
+            movies.push(movie);
         }
         movies
+    }
+
+    fn db_client() -> Client {
+        let conn_string = env::var("DB_CONN_STRING").expect("Key not found");
+        Client::connect(&conn_string, NoTls).unwrap()
+    }
+    
+    pub fn insert_rows(rows: Vec<&Movie>) {
+        let mut client = Self::db_client();
+    
+        client
+            .batch_execute(
+                "
+        CREATE TABLE IF NOT EXISTS five_star_romance (
+            id                  SERIAL PRIMARY KEY,
+            title               VARCHAR NOT NULL,
+            release_date        DATE,
+            budget              INT,
+            popularity          REAL,
+            revenue             REAL,
+            runtime             REAL,
+            vote_average        REAL,
+            vote_count          INT,
+            rating              REAL
+        )
+        ",
+            )
+            .unwrap();
+    
+        for param in rows {
+            client
+            .execute(
+                "INSERT INTO five_star_romance (
+                    title, release_date, budget, popularity, revenue, runtime, vote_average, vote_count, rating
+                ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)",
+                &[
+                    &param.title,
+                    &param.release_date,
+                    &param.budget,
+                    &param.popularity,
+                    &param.revenue,
+                    &param.runtime,
+                    &param.vote_average,
+                    &param.vote_count,
+                    &param.rating,
+                ],
+            )
+            .unwrap();
+        }
     }
 }

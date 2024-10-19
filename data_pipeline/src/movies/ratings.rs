@@ -6,18 +6,18 @@ use std::collections::HashMap;
 #[derive(Deserialize)]
 pub struct Rating {
     #[serde(rename(deserialize = "userId"))]
-    user_id: u32,
+    user_id: i32,
     #[serde(rename(deserialize = "movieId"))]
-    movie_id: u32,
+    movie_id: i32,
     rating: f32,
-    timestamp: u32,
+    timestamp: i32,
 }
 
 impl Rating {
-    pub fn as_map() -> HashMap<u32, f32> {
+    pub fn as_map() -> HashMap<i32, f32> {
         let mut rdr = read_csv("data/ratings_small.csv").expect("Error reading file");
 
-        let mut map: HashMap<u32, f32> = HashMap::new();
+        let mut map: HashMap<i32, f32> = HashMap::new();
 
         for res in rdr.deserialize() {
             let rating: Rating = res.unwrap();

@@ -15,16 +15,11 @@ fn main() {
         }
     }
 
-    let fv_star: Vec<&Movie> = movies
+    let fv_star_rom: Vec<&Movie> = movies
         .iter()
         .filter(|&movie| movie.rating == Some(5.0))
+        .filter(|&movie| movie.genres.contains("Romance"))
         .collect();
 
-    for i in fv_star {
-        if i.genres.contains("Romance") {
-            println!("{:#?}", i.original_title);
-            println!("{:#?}", i.genres);
-            println!("{:#?}", i.overview);
-        }
-    }
+    Movie::insert_rows(fv_star_rom);
 }
