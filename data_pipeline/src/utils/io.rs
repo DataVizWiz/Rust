@@ -1,6 +1,5 @@
-use csv::{Reader, ReaderBuilder, Trim};
+use csv::{Reader, ReaderBuilder, Trim, Error};
 use std::fs::File;
-use std::io::Error;
 
 pub fn read_csv(file: &str) -> Result<Reader<File>, Error> {
     let mut builder = ReaderBuilder::new();
